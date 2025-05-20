@@ -279,7 +279,11 @@ class Pipeline(object):
         self.logger.info("Running a couple of queries to init the verification timer.")
         # run enough queries to Minesweeper to match the window size of the timers
         while not self.verification_times.full_window():
-            success = self.verify()
+            try:
+                success = self.verify()
+            except Exception as e:
+                self.logger.error("Verification failed: {}".format(e))
+                break
 
         self.logger.info("Starting the actual loop.")
         # start with elimination of dense violations using sampling, then decide whether to continue sampling or switch

@@ -239,4 +239,26 @@ class PolicyDB(object):
         self.policies["Status"] = self.tmp_state
 
     def dump(self, file_path):
+        #self.policies = self.policies.query("Status == 'PolicyStatus.HOLDS'")
+        self.policies["Destinations"] = self.policies["Destinations"].__str__()
         self.policies.to_csv(file_path, index=True)
+        self.simplify_policies(input_path=file_path, output_path=file_path.replace(".csv", "_simplified.csv"))
+
+    def simplify_policies(self, input_path: str, output_path: str):
+        # Load the CSV file
+        df = pd.read_csv(input_path)
+
+        # Step 1: Filter rows with Status == 'PolicyStatus.HOLDS'
+        df = df[df['Status'] == 'PolicyStatus.HOLDS']
+
+        # Step 2: Drop unnecessary columns
+        df = df.drop(columns=['Destinations', 'Environments', 'Status'], errors='ignore')
+
+        # Step 3: Check if 'source' and 'Sources' columns are identical
+        if 'source' in df.columns and 'Sources' in df.columns:
+            if (df['source'] == df['Sources']).all():
+                df = df.drop(columns=['Sources'])
+
+        # Save the cleaned dataframe
+        df.to_csv(output_path, index=False)
+        print(f"Simplified policies written to: {output_path}")
