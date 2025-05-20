@@ -1,7 +1,9 @@
 # Batfish files
 batfish_interface/batfish-73946b2f1bdea5f1146e4db4f2586e071da752df/
-scenarios/
 
+# C2S output inventories
+scenarios/
+scenarios_tmp/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
